@@ -1,0 +1,7 @@
+{
+  "env": {
+    "MONGO_USER": "Jahongir780110",
+    "MONGO_PASSWORD": "Jahongir.780110",
+    "MONGO_DEFAULT_DATABASE": "chat-rest"
+  }
+}
