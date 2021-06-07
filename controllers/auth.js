@@ -32,9 +32,17 @@ exports.putSignup = async (req, res, next) => {
       color: color,
     });
     const result = await user.save();
+    const token = jwt.sign(
+      { email: user.email, userId: user._id.toString() },
+      "secret",
+      { expiresIn: "1h" }
+    );
     res.status(201).json({
-      message: "User created!",
-      userId: result._id,
+      token: token,
+      name: user.name,
+      color: user.color,
+      expiresIn: 3600,
+      userId: result._id.toString(),
     });
   } catch (err) {
     if (!err.statusCode) {
