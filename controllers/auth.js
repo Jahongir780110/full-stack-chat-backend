@@ -82,6 +82,7 @@ exports.postSignin = async (req, res, next) => {
       name: user.name,
       color: user.color,
       expiresIn: 3600,
+      bio: user.bio,
     });
   } catch (err) {
     if (!err.statusCode) {
