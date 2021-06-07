@@ -17,6 +17,7 @@ exports.putSignup = async (req, res, next) => {
     const email = req.body.email;
     const name = req.body.name;
     const password = req.body.password;
+    const bio = req.body.bio;
     const color = colorGenerator();
     const doesUserExist = await User.findOne({ email: email });
     if (doesUserExist) {
@@ -30,6 +31,7 @@ exports.putSignup = async (req, res, next) => {
       password: hashedPassword,
       name: name,
       color: color,
+      bio: bio,
     });
     const result = await user.save();
     const token = jwt.sign(
@@ -41,6 +43,7 @@ exports.putSignup = async (req, res, next) => {
       token: token,
       name: user.name,
       color: user.color,
+      bio: user.bio,
       expiresIn: 3600,
       userId: result._id.toString(),
     });

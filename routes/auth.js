@@ -24,6 +24,12 @@ router.put(
       )
       .not()
       .isEmpty(),
+    body("bio")
+      .trim()
+      .isLength({ min: 3, max: 30 })
+      .withMessage(
+        "Your bio must contain at least 3 characters and maximum 30 characters"
+      ),
   ],
   authController.putSignup
 );
