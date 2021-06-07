@@ -20,10 +20,6 @@ const messageSchema = new Schema(
       type: Boolean,
       required: true,
     },
-    updatedTime: {
-      type: Object,
-      required: true,
-    },
   },
   { timestamps: true }
 );

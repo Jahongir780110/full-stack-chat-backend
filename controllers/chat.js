@@ -21,14 +21,12 @@ exports.postMessage = (req, res, next) => {
   const content = req.body.content;
   const author = req.body.author;
   const color = req.body.color;
-  const updatedTime = req.body.updatedTime;
 
   const message = new Message({
     content,
     author,
     color,
     edited: false,
-    updatedTime,
   });
 
   message
@@ -50,7 +48,6 @@ exports.postMessage = (req, res, next) => {
 exports.editMessage = (req, res, next) => {
   const content = req.body.content;
   const messageId = req.body.messageId;
-  const updatedTime = req.body.updatedTime;
   Message.findById(messageId)
     .then((message) => {
       if (!message) {
@@ -60,7 +57,6 @@ exports.editMessage = (req, res, next) => {
       }
       message.content = content;
       message.edited = true;
-      message.updatedTime = updatedTime;
       return message.save();
     })
     .then((data) => {
