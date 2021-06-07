@@ -2,8 +2,6 @@ const Message = require("../models/message");
 
 exports.getMessages = (req, res, next) => {
   Message.find()
-    .populate("author")
-    .execPopulate()
     .then((messages) => {
       res.status(200).json({
         message: "Success!!!",
