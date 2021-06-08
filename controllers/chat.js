@@ -1,4 +1,5 @@
 const Message = require("../models/message");
+const io = require("../socket");
 
 exports.getMessages = (req, res, next) => {
   Message.find()
@@ -32,6 +33,7 @@ exports.postMessage = (req, res, next) => {
   message
     .save()
     .then((message) => {
+      io.getIO().emit("messages", { action: "create", message: message });
       res.status(201).json({
         message: "Message Successfully created",
         data: message,
