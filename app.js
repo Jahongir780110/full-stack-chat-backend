@@ -63,5 +63,8 @@ mongoose
     io.on("connection", (socket) => {
       console.log("Client connected");
     });
+    io.on("hello", (namespace) => {
+      console.log(namespace);
+    });
   })
   .catch((err) => console.log(err));
