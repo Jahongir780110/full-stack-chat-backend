@@ -52,11 +52,16 @@ mongoose
   .then((result) => {
     console.log("yahooo, connected to database!");
     const server = app.listen(process.env.PORT || 3000);
-    const io = require("socket.io")(server, { serveClient: false });
+    // const io = require("./socket").init(server);
+    // io.on("connection", (socket) => {
+    //   console.log("Client connected");
+    // });
+
+    const io = require("socket.io")(server, {
+      cors: "*",
+    });
     io.on("connection", (socket) => {
       console.log("Client connected");
     });
-
-    //io.on("message")
   })
   .catch((err) => console.log(err));
