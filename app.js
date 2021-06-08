@@ -47,24 +47,22 @@ app.use((error, req, res, next) => {
   res.status(status).json({ message: message, data: data });
 });
 
+const io = require("socket.io")();
+
+io.on("connection", (socket) => {
+  console.log("Client connected");
+});
+
 mongoose
   .connect(MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
   .then((result) => {
-    console.log("yahooo, connected to database!");
+    console.log("yahooo, connected to database");
     const server = app.listen(process.env.PORT || 3000);
     // const io = require("./socket").init(server);
     // io.on("connection", (socket) => {
     //   console.log("Client connected");
     // });
 
-    const io = require("socket.io")(server, {
-      cors: {
-        origin: "*",
-        methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-      },
-    });
-    io.on("connection", (socket) => {
-      console.log("Client connected");
-    });
+    //io.on("message")
   })
   .catch((err) => console.log(err));
