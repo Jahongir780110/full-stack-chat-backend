@@ -33,6 +33,9 @@ exports.postMessage = (req, res, next) => {
   message
     .save()
     .then((message) => {
+      return message.populate("author").execPopulate();
+    })
+    .then((message) => {
       io.getIO().emit("messages", { action: "create", message: message });
       res.status(201).json({
         message: "Message Successfully created",
