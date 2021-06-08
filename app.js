@@ -50,10 +50,19 @@ app.use((error, req, res, next) => {
 mongoose
   .connect(MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
   .then((result) => {
-    const server = app.listen(process.env.PORT || 3000);
     console.log("yahooo, connected to database!");
+    const server = app.listen(process.env.PORT || 3000);
+    // const io = require("./socket").init(server);
+    // io.on("connection", (socket) => {
+    //   console.log("Client connected");
+    // });
 
-    const io = require("./socket").init(server);
+    const io = require("socket.io")(server, {
+      cors: {
+        origin: "*",
+        methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+      },
+    });
     io.on("connection", (socket) => {
       console.log("Client connected");
     });
