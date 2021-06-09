@@ -1,10 +1,12 @@
-const express = require("express");
 const fs = require("fs");
 const path = require("path");
+
+const express = require("express");
 const mongoose = require("mongoose");
 const helmet = require("helmet");
 const compression = require("compression");
 const morgan = require("morgan");
+const cors = require("cors");
 
 const chatRoutes = require("./routes/chat");
 const authRoutes = require("./routes/auth");
@@ -18,21 +20,17 @@ const accessLogStream = fs.createWriteStream(
 
 const app = express();
 
+app.use("/images", express.static(path.join(__dirname, "images")));
+
+app.use(express.json());
 app.use(helmet());
 app.use(compression());
 app.use(morgan("combined", { stream: accessLogStream }));
+app.use(cors());
 
-app.use(express.json());
-
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, PATCH, DELETE"
-  );
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  next();
-});
+app.use(
+  multer({ storage: fileStorage, fileFilter: fileFilter }).single("image")
+);
 
 app.use("/auth", authRoutes);
 app.use("/chat", chatRoutes);

@@ -25,6 +25,9 @@ exports.putSignup = async (req, res, next) => {
       error.statusCode = 401;
       throw error;
     }
+
+    console.log(req.file);
+
     const hashedPassword = await bcrypt.hash(password, 12);
     const user = new User({
       email: email,

@@ -1,9 +1,31 @@
 const express = require("express");
 const { body } = require("express-validator");
+const multer = require("multer");
 
 const authController = require("../controllers/auth");
 
 const router = express.Router();
+
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "images");
+  },
+  filename: (req, file, cb) => {
+    cb(null, new Date().getTime() + "-" + file.originalname);
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === "image/png" ||
+    file.mimetype === "image/jpeg" ||
+    file.mimetype === "image/jpg"
+  ) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
 
 router.put(
   "/signup",
@@ -31,6 +53,7 @@ router.put(
         "Your bio must contain at least 3 characters and maximum 30 characters"
       ),
   ],
+  multer({ storage: fileStorage, fileFilter: fileFilter }).single("file"),
   authController.putSignup
 );
 
