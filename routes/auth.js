@@ -53,7 +53,7 @@ router.put(
         "Your bio must contain at least 3 characters and maximum 30 characters"
       ),
   ],
-  multer({ storage: fileStorage, fileFilter: fileFilter }).single("file"),
+  // multer({ storage: fileStorage, fileFilter: fileFilter }).single("file"),
   authController.putSignup
 );
 

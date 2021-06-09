@@ -26,8 +26,6 @@ exports.putSignup = async (req, res, next) => {
       throw error;
     }
 
-    console.log(req.file);
-
     const hashedPassword = await bcrypt.hash(password, 12);
     const user = new User({
       email: email,
@@ -49,6 +47,7 @@ exports.putSignup = async (req, res, next) => {
       bio: user.bio,
       expiresIn: 3600,
       userId: result._id.toString(),
+      file: req.file,
     });
   } catch (err) {
     if (!err.statusCode) {
