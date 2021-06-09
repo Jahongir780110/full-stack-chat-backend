@@ -14,10 +14,16 @@ exports.putSignup = async (req, res, next) => {
       error.data = errors.array();
       throw error;
     }
+    if (!req.file) {
+      const error = new Error("No image provided.");
+      error.statusCode = 422;
+      throw error;
+    }
     const email = req.body.email;
     const name = req.body.name;
     const password = req.body.password;
     const bio = req.body.bio;
+    const file = req.file;
     const color = colorGenerator();
     const doesUserExist = await User.findOne({ email: email });
     if (doesUserExist) {
@@ -33,6 +39,7 @@ exports.putSignup = async (req, res, next) => {
       name: name,
       color: color,
       bio: bio,
+      imgUrl: file.path,
     });
     const result = await user.save();
     const token = jwt.sign(
@@ -47,7 +54,7 @@ exports.putSignup = async (req, res, next) => {
       bio: user.bio,
       expiresIn: 3600,
       userId: result._id.toString(),
-      file: req.file,
+      imgUrl: user.imgUrl,
     });
   } catch (err) {
     if (!err.statusCode) {
@@ -78,6 +85,7 @@ exports.postSignin = async (req, res, next) => {
       "secret",
       { expiresIn: "1h" }
     );
+    console.log(user);
     res.status(200).json({
       token: token,
       userId: user._id.toString(),
@@ -85,6 +93,7 @@ exports.postSignin = async (req, res, next) => {
       color: user.color,
       expiresIn: 3600,
       bio: user.bio,
+      imgUrl: user.imgUrl,
     });
   } catch (err) {
     if (!err.statusCode) {

@@ -29,6 +29,7 @@ const fileFilter = (req, file, cb) => {
 
 router.put(
   "/signup",
+  multer({ storage: fileStorage, fileFilter: fileFilter }).single("file"),
   [
     body("email")
       .isEmail()
@@ -53,7 +54,6 @@ router.put(
         "Your bio must contain at least 3 characters and maximum 30 characters"
       ),
   ],
-  // multer({ storage: fileStorage, fileFilter: fileFilter }).single("file"),
   authController.putSignup
 );
 
