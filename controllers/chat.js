@@ -76,7 +76,7 @@ exports.editMessage = (req, res, next) => {
 };
 
 exports.deleteMessage = (req, res, next) => {
-  const messageId = req.body.messageId;
+  const messageId = req.params.messageId;
   Message.findByIdAndRemove(messageId)
     .then((data) => {
       if (!data) {
