@@ -20,6 +20,12 @@ const messageSchema = new Schema(
       type: Boolean,
       required: true,
     },
+    repliedMessage: {
+      type: Schema.Types.ObjectId,
+      ref: "Message",
+      required: false,
+      default: null,
+    },
   },
   { timestamps: true }
 );

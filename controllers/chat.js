@@ -4,6 +4,12 @@ const io = require("../socket");
 exports.getMessages = (req, res, next) => {
   Message.find()
     .populate("author")
+    .populate({
+      path: "repliedMessage",
+      populate: {
+        path: "author",
+      },
+    })
     .then((messages) => {
       res.status(200).json({
         message: "Success!!!",
@@ -22,18 +28,28 @@ exports.postMessage = (req, res, next) => {
   const content = req.body.content;
   const author = req.body.author;
   const color = req.body.color;
+  const repliedMessage = req.body.repliedMessage;
 
   const message = new Message({
     content,
     author,
     color,
     edited: false,
+    repliedMessage,
   });
 
   message
     .save()
     .then((message) => {
-      return message.populate("author").execPopulate();
+      return message
+        .populate("author")
+        .populate({
+          path: "repliedMessage",
+          populate: {
+            path: "author",
+          },
+        })
+        .execPopulate();
     })
     .then((message) => {
       io.getIO().emit("messages", { action: "create", message: message });
@@ -65,7 +81,20 @@ exports.editMessage = (req, res, next) => {
       return message.save();
     })
     .then((data) => {
-      res.status(200).json({ message: "Post edited.", editedMessage: data });
+      return Message.find()
+        .populate("author")
+        .populate({
+          path: "repliedMessage",
+          populate: {
+            path: "author",
+          },
+        });
+    })
+    .then((messages) => {
+      io.getIO().emit("messages", { action: "edit", messages: messages });
+      res.status(200).json({
+        message: "Successfully edited message )",
+      });
     })
     .catch((err) => {
       if (!err.statusCode) {
@@ -76,7 +105,7 @@ exports.editMessage = (req, res, next) => {
 };
 
 exports.deleteMessage = (req, res, next) => {
-  const messageId = req.params.messageId;
+  const messageId = req.query.messageId;
   Message.findByIdAndRemove(messageId)
     .then((data) => {
       if (!data) {
@@ -84,9 +113,20 @@ exports.deleteMessage = (req, res, next) => {
         error.statusCode = 404;
         throw error;
       }
-      res.status(200).json({
-        message: "Successfully deleted message )",
-      });
+      Message.find()
+        .populate("author")
+        .populate({
+          path: "repliedMessage",
+          populate: {
+            path: "author",
+          },
+        })
+        .then((messages) => {
+          io.getIO().emit("messages", { action: "delete", messages: messages });
+          res.status(200).json({
+            message: "Successfully deleted message )",
+          });
+        });
     })
     .catch((err) => {
       if (!err.statusCode) {
